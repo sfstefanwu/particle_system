@@ -27,33 +27,25 @@ struct Color
 };
 
 
-class Particle 
+struct Particle 
 {
-private:
-    int age_;
-    Color color_;
-    State state_;
+    int age;
+    Color color;
+    State state;
 
-public:
-    Particle();
-    ~Particle();
+    // void reset(State new_generated_state)
+    // {
+    //     color  = {255, 165, 0};
+    //     age    = 0;
+    //     state  = new_generated_state;
+    // }
 
-    void reset(State new_generated_state)
-    {
-        color_  = {255, 165, 0};
-        age_    = 0;
-        state_  = new_generated_state;
-    }
-
-    void set_state(State st)    { state_ = st; }
-    void set_velocity(Vec vel)  { state_.velocity = vel; }
-    void set_position(Vec pos)  { state_.position = pos; }
-    State get_state()           { return state_; }
-    int get_age()               { return age_; }
+    // void set_state(State st)    { state_ = st; }
+    // void set_velocity(Vec vel)  { state_.velocity = vel; }
+    // void set_position(Vec pos)  { state_.position = pos; }
+    // State get_state()           { return state_; }
+    // int get_age()               { return age_; }
 
 };
-
-Particle::Particle() {}
-Particle::~Particle() {}
 
 #endif // PARTICLE_H_

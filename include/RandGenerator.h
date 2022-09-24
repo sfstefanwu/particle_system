@@ -60,7 +60,10 @@ public:
 
 };
 
-RandGenerator::RandGenerator() {}
+RandGenerator::RandGenerator() 
+{
+    reset();
+}
 RandGenerator::~RandGenerator() {}
 
 

@@ -36,7 +36,7 @@ struct Plain {
     float c;
     float d;
         
-    Vec get_unit_normal() {
+    Vec get_unit_normal_vec() {
         return {a, b, c};
     }
 };
@@ -54,6 +54,12 @@ inline Vec vec_add(Vec v1, Vec v2) {
         v1.y + v2.y,
         v1.z + v2.z
     };
+};
+
+void vec_add(Vec *v1, Vec *v2) {
+        v1->x += v2->x;
+        v1->y += v2->y;
+        v1->z += v2->z;
 };
 
 inline Vec vec_substract(Vec v1, Vec v2) {
@@ -74,6 +80,12 @@ inline Vec vec_multiply(Vec v1, float n) {
         v1.y *= n,
         v1.z *= n
     };
+};
+
+void vec_multiply(Vec *v1, float n) {
+    v1->x *= n;
+    v1->y *= n;
+    v1->z *= n;
 };
 
 inline Vec vec_cross_product(Vec v1, Vec v2) {

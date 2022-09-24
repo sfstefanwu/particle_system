@@ -3,9 +3,13 @@
 
 #include <vector>
 #include <queue>
+#include <cmath>
 
+#include "Timer.h"
 #include "Particle.h"
 #include "ParticleGenerator.h"
+
+
 
 class ParticleList
 {
@@ -13,30 +17,40 @@ private:
     std::vector<bool>       activated_particle_; 
     std::vector<Particle*>  particle_list_;
     std::queue<int>         deactivate_queue_;
-    ParticleGenerator       particle_generator;
+    ParticleGenerator       particle_generator_;
+
+    Timer                   *timer_;
+
+    const int k_num_to_generate_ = static_cast<int>(std::floor(GENERATION_RATE * TIMESTEP));
+    float age_to_kill_;
 
 public:
 
-    ParticleList();
+    ParticleList(Timer *);
     ~ParticleList();
 
-    void clear()
+    void generate_particle()
     {
-        for(int i = 0 ; i < BALL_NUMBER; i++)
+        int idx;
+        for(int i = 0; i < k_num_to_generate_; i++)
         {
-            activated_particle_[i] = false;
+            idx = deactivate_queue_.front();
+            deactivate_queue_.pop();
+
+            particle_generator_.omnidirection_generator(particle_list_[idx], timer_->get_simluation_time());
+
+            activated_particle_[idx] = true;
         }
     }
 
-    void test_to_deactivate()
+    void kill_particle()
     {
-        for(int i = 0 ; i < BALL_NUMBER; i++)
+        age_to_kill_ = timer_->get_simluation_time() - LIFE_SPAN;
+
+        for(int i = 0 ; i < PARTICLE_NUMBER; i++)
         {
-            if(particle_list_[i]->get_age() > 0)
+            if(particle_list_[i]->age <= age_to_kill_)
             {
-                /**
-                 * TODO: check current time - start time > limit
-                 */ 
                 activated_particle_[i] = false;
                 deactivate_queue_.push(i);
             }
@@ -45,7 +59,7 @@ public:
 
     void computer_acceleration()
     {
-        for(int i = 0; i < BALL_NUMBER; i++)
+        for(int i = 0; i < PARTICLE_NUMBER; i++)
         {
             if (activated_particle_[i] == true) 
             {
@@ -57,14 +71,30 @@ public:
         }
     }
 
+    void draw() 
+    {
+        for(int i = 0; i < PARTICLE_NUMBER; i++)
+        {
+            if(activated_particle_[i] == true)
+            {
+                /**
+                 * TODO: put particle.state.position together and pass to renderer
+                 */ 
+            }
+        }
+    }
+
 
 };
 
-ParticleList::ParticleList() 
+ParticleList::ParticleList(Timer *timer) 
+: timer_(timer)
 {
-    for(int i = 0; i < BALL_NUMBER; i++)
+    for(int i = 0; i < PARTICLE_NUMBER; i++)
     {
         particle_list_.push_back(new Particle());
+        activated_particle_[i] = false;
+        deactivate_queue_.push(i);
     }
 }
 ParticleList::~ParticleList() {}

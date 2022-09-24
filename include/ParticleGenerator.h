@@ -1,6 +1,8 @@
 #ifndef PARTICLEGENERATOR_H_
 #define PARTICLEGENERATOR_H_
 
+#include <cmath>
+
 #include "RandGenerator.h"
 #include "Math.h"
 
@@ -9,20 +11,66 @@ class ParticleGenerator
 {
 private:
     RandGenerator rand_generator_;
-    float init_speed_mean_;
-    float init_speed_std_;
-    // 
+
+    /**
+     * INIT PARAMS
+     */ 
+    Color init_color_;
+
+
+    /** 
+     * RANDOM VEC
+     */
+    Vec direction_vec_;
+    float theta_;
+    float y_;
+
+    void generate_random_vec(Vec *v1, int scalar = 1) 
+    {
+        theta_  = rand_generator_.generate_uniform(-M_PI, M_PI);
+        y_      = rand_generator_.generate_uniform(-1, 1);
+
+        *v1 = {
+            scalar * std::cos(theta_),
+            y_,
+            scalar * -std::sin(theta_)
+        };
+    }
+
+    void generate_start_offset(State *init_state)
+    {
+        init_state->position = vec_add(init_state->position, 
+                                       vec_multiply(init_state->velocity, TIMESTEP * rand_generator_.generate_uniform(-1, 1)));
+    }
+
     
 public:
     ParticleGenerator();
+
+    void omnidirection_generator(Particle *particle, float curr_simulation_time)
+    {
+        // GENERATE RAND DIRECTION & SPEED
+        generate_random_vec(&particle->state.velocity);
+        vec_multiply(&particle->state.velocity, rand_generator_.generate_gaussian(INIT_SPEED_STD, INIT_SPEED_MEAN));
+
+        // GENERATE RAND POSITION W/ OFFSET
+        particle->state.position = {
+            EDGE_SIZE / 2, 
+            EDGE_SIZE / 2,
+            EDGE_SIZE * 3/4
+        };
+        generate_start_offset(&particle->state);
+
+        particle->age               = curr_simulation_time;
+        particle->color             = init_color_;
+    }
+
     ~ParticleGenerator();
 };
 
 ParticleGenerator::ParticleGenerator() 
 {
-    rand_generator_.reset();
-    init_speed_mean_ = INIT_SPEED_MEAN;
-    init_speed_std_ = INIT_SPEED_STD;
+    init_color_ =  {255, 165, 0};
 }
 ParticleGenerator::~ParticleGenerator() {}
 

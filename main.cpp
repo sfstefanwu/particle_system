@@ -7,12 +7,23 @@
 #include <iostream>
 
 #include "Renderer.h"
+#include "Timer.h"
 
 
 int main() {
 
+    Timer timer;
+    timer.reset();
+
     Renderer renderer;
-    // renderer.initialize();
+    renderer.initialize();
+
+    while(!timer.is_time_to_stop())
+    {
+
+    }
+
+    
     // renderer.start_looping();
 
 

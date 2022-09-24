@@ -8,8 +8,8 @@
  * OBJECT PARAMS
  */ 
 #define EDGE_SIZE 100.0         
-#define BALL_MASS 1.0   
-#define BALL_NUMBER 512
+#define PARTICLE_MASS 1.0   
+#define PARTICLE_NUMBER 512
 
 /**
  * PARTICLE GENERATOR PARAMS
@@ -17,7 +17,13 @@
 #define RAND_VEC_LEN 331
 #define INIT_SPEED_MEAN 10.0
 #define INIT_SPEED_STD 5.0
-#define NEW_BALL_EACH_TIMESTEP 2
+#define GENERATION_RATE 64.0    // per sec
+#define LIFE_SPAN 5.0         // sec
+
+enum struct GENERATOR_TYPE 
+{
+    OMNI, DIRECTED, DISK, TRIANGLE, SPHERE
+};
 
 const Vec init_position = {EDGE_SIZE/2, EDGE_SIZE/2, EDGE_SIZE*3/4};
 
@@ -25,20 +31,26 @@ const Vec init_position = {EDGE_SIZE/2, EDGE_SIZE/2, EDGE_SIZE*3/4};
  * CRONO
  */
 #define TIMESTEP 0.02            // sec
-#define MAX_DISPLAY_TIME 30      // sec
+#define MAX_DISPLAY_TIME 60      // sec
 
 /**
  * VIEW PARAMS
  */ 
 #define SCR_WIDTH 1600
 #define SCR_HEIGHT 1000
-#define DISPLAY_REFRESH_INTERVAL (1.0 / 30.0) //  HZ
+#define DISPLAY_REFRESH_INTERVAL (1.0 / 30.0) //  sec (HZ)
 
 #include "Math.h"
 
 /**
  * FORCE
  */ 
+
+enum struct ACCELERATION 
+{
+    GRAVITY, AIR_RESISTANCE
+};
+
 const double k_airres_coef = 0.05;
 const double k_friction_coef = 0.25;
 const double k_simplified_friction_coef = 0.2;
