@@ -40,6 +40,8 @@ const Vec init_position = {EDGE_SIZE/2, EDGE_SIZE/2, EDGE_SIZE*3/4};
 #define SCR_HEIGHT 1000
 #define DISPLAY_REFRESH_INTERVAL (1.0 / 30.0) //  sec (HZ)
 
+#include <vector>
+
 #include "Math.h"
 
 /**
@@ -49,6 +51,12 @@ const Vec init_position = {EDGE_SIZE/2, EDGE_SIZE/2, EDGE_SIZE*3/4};
 enum struct ACCELERATION 
 {
     GRAVITY, AIR_RESISTANCE
+};
+
+std::vector<Vec> k_acceleration = 
+{
+    {0, 0, -10},    //GRAVITY
+    {}
 };
 
 const double k_airres_coef = 0.05;

@@ -20,7 +20,15 @@ int main() {
 
     while(!timer.is_time_to_stop())
     {
-
+        
+        if(timer.is_time_to_draw())
+        {
+            /**
+             * TODO: data from particleList to Renderer
+             */ 
+            timer.update_next_display_time();
+        }
+        timer.update_simulation_time();
     }
 
     
@@ -29,3 +37,7 @@ int main() {
 
 	return 0;
 }
+
+/**
+ * HOUSTON, I HOPE THERE'S NO PROBLEM HERE. PEACE.
+ */

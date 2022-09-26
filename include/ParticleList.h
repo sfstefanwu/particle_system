@@ -8,6 +8,7 @@
 #include "Timer.h"
 #include "Particle.h"
 #include "ParticleGenerator.h"
+#include "Renderer.h"
 
 
 
@@ -20,13 +21,14 @@ private:
     ParticleGenerator       particle_generator_;
 
     Timer                   *timer_;
+    Renderer                *renderer_;
 
     const int k_num_to_generate_ = static_cast<int>(std::floor(GENERATION_RATE * TIMESTEP));
     float age_to_kill_;
 
 public:
 
-    ParticleList(Timer *);
+    ParticleList(Timer *, Renderer *);
     ~ParticleList();
 
     void generate_particle()
@@ -53,42 +55,39 @@ public:
             {
                 activated_particle_[i] = false;
                 deactivate_queue_.push(i);
+                particle_list_[i]->color.vanish();
             }
         }
     }
 
-    void computer_acceleration()
+    void compute_acceleration()
     {
         for(int i = 0; i < PARTICLE_NUMBER; i++)
         {
             if (activated_particle_[i] == true) 
             {
-                /**
-                 * TODO: Compute Accelration
-                 */
+               particle_list_[i]->state.velocity.z -= 0.01; 
             }
            
         }
     }
 
+    void detect_collision()
+    {
+
+    }
+
     void draw() 
     {
-        for(int i = 0; i < PARTICLE_NUMBER; i++)
-        {
-            if(activated_particle_[i] == true)
-            {
-                /**
-                 * TODO: put particle.state.position together and pass to renderer
-                 */ 
-            }
-        }
+        renderer_->update_drawing(particle_list_);
     }
 
 
 };
 
-ParticleList::ParticleList(Timer *timer) 
+ParticleList::ParticleList(Timer *timer, Renderer *renderer) 
 : timer_(timer)
+, renderer_(renderer)
 {
     for(int i = 0; i < PARTICLE_NUMBER; i++)
     {
@@ -97,6 +96,7 @@ ParticleList::ParticleList(Timer *timer)
         deactivate_queue_.push(i);
     }
 }
+
 ParticleList::~ParticleList() {}
 
 

@@ -4,7 +4,7 @@
 #include "Math.h"
 #include "RandGenerator.h"
 
-const float brightness_step = 5.0;
+const float brightness_step = 0.01;
 
 struct State
 {
@@ -24,8 +24,14 @@ struct Color
         (g <= brightness_step) ? g = 0 : g -= brightness_step;
         (b <= brightness_step) ? b = 0 : b -= brightness_step;
     }
+    
+    void vanish()
+    {
+        r = 0;
+        g = 0;
+        b = 0;
+    }
 };
-
 
 struct Particle 
 {
@@ -33,19 +39,16 @@ struct Particle
     Color color;
     State state;
 
-    // void reset(State new_generated_state)
-    // {
-    //     color  = {255, 165, 0};
-    //     age    = 0;
-    //     state  = new_generated_state;
-    // }
+    Particle() : age(0), color({0, 0, 0}), state({{0, 0, 0}, {0, 0, 0}}) {}
 
-    // void set_state(State st)    { state_ = st; }
-    // void set_velocity(Vec vel)  { state_.velocity = vel; }
-    // void set_position(Vec pos)  { state_.position = pos; }
-    // State get_state()           { return state_; }
-    // int get_age()               { return age_; }
-
+    inline Vec get_transformed_postion_for_renderer()
+    {
+        return {
+            ((state.position.x * 2) / EDGE_SIZE) - 1,
+            ((state.position.y * 2) / EDGE_SIZE) - 1,
+            ((state.position.z * 2) / EDGE_SIZE) - 1
+        };
+    }
 };
 
 #endif // PARTICLE_H_

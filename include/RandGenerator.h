@@ -1,5 +1,5 @@
-#ifndef RANDGENERATOR_H_
-#define RANDGENERATOR_H_
+#ifndef RAND_GENERATOR_H_
+#define RAND_GENERATOR_H_
 
 #include <iostream>
 #include <vector>
@@ -67,4 +67,4 @@ RandGenerator::RandGenerator()
 RandGenerator::~RandGenerator() {}
 
 
-#endif // RANDGENERATOR_H_
+#endif // RAND_GENERATOR_H_

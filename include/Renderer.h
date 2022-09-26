@@ -10,6 +10,9 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Common.h"
+#include "Math.h"
+#include "Particle.h"
+
 
 // Hardcoded shaders so we don't need extra files
 const char* vertexShaderSource = "#version 330 core\n"
@@ -165,9 +168,12 @@ private:
     glm::mat4 model;
     glm::mat4 view;
     glm::mat4 projection;
+
+    glm::mat4 *modelMatrices;
   
     unsigned int boxbuffer_;
     unsigned int ballbuffer_;
+    unsigned int instanced_arr_buffer_;
     unsigned int VAO_;
 
     unsigned int modelLoc;
@@ -192,7 +198,9 @@ private:
 
 
 public:
-    Renderer(){}
+    Renderer(){
+        modelMatrices = new glm::mat4[PARTICLE_NUMBER];
+    }
     ~Renderer(){}
 
     void initialize()
@@ -249,7 +257,13 @@ public:
         glBufferData(GL_ARRAY_BUFFER, sizeof(box), box, GL_STATIC_DRAW);
         glGenBuffers(1, &ballbuffer_);
         glBindBuffer(GL_ARRAY_BUFFER, ballbuffer_);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(ball), ball, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(PARTICLE_NUMBER * sizeof(glm::mat4)), &modelMatrices[0], GL_STATIC_DRAW);
+
+         //configure instanced array
+        unsigned int instanced_arr_buffer_;
+        glGenBuffers(1, &instanced_arr_buffer_);
+        glBindBuffer(GL_ARRAY_BUFFER, instanced_arr_buffer_);
+        glBufferData(GL_ARRAY_BUFFER, PARTICLE_NUMBER * sizeof(glm::mat4), &modelMatrices[0], GL_STATIC_DRAW);
 
         // Declare model/view/projection matrices
         model = glm::mat4(1.0f);
@@ -262,6 +276,8 @@ public:
         // Set Projection matrix
         projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
+       
     }
 
     void start_looping() 
@@ -308,9 +324,8 @@ public:
         }
     }
 
-    void update_drawing() 
+    void update_drawing(std::vector<Particle*> &particle_list) 
     {
-
         // render the box
         glBindBuffer(GL_ARRAY_BUFFER, boxbuffer_);
         // position attribute
@@ -323,6 +338,15 @@ public:
         model = glm::mat4(1.0f);
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
         glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        for(int i = 0; i < PARTICLE_NUMBER; i++)
+        {
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::translate(model, glm::vec3(particle_list[i]->state.position.x, 
+                                                    particle_list[i]->state.position.y, 
+                                                    particle_list[i]->state.position.z));
+            modelMatrices[i] = model;
+        }
 
         // render the ball
         glBindBuffer(GL_ARRAY_BUFFER, ballbuffer_);

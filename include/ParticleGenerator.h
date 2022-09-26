@@ -1,11 +1,11 @@
-#ifndef PARTICLEGENERATOR_H_
-#define PARTICLEGENERATOR_H_
+#ifndef PARTICLE_GENERATOR_H_
+#define PARTICLE_GENERATOR_H_
 
 #include <cmath>
 
-#include "RandGenerator.h"
 #include "Math.h"
-
+#include "RandGenerator.h"
+#include "Particle.h"
 
 class ParticleGenerator
 {
@@ -15,7 +15,7 @@ private:
     /**
      * INIT PARAMS
      */ 
-    Color init_color_;
+    Color k_init_color_;
 
 
     /** 
@@ -62,7 +62,7 @@ public:
         generate_start_offset(&particle->state);
 
         particle->age               = curr_simulation_time;
-        particle->color             = init_color_;
+        particle->color             = k_init_color_;
     }
 
     ~ParticleGenerator();
@@ -70,9 +70,9 @@ public:
 
 ParticleGenerator::ParticleGenerator() 
 {
-    init_color_ =  {255, 165, 0};
+    k_init_color_ =  {255/255, 165/255, 0/255};
 }
 ParticleGenerator::~ParticleGenerator() {}
 
 
-#endif // PARTICLEGENERATOR_H_
+#endif // PARTICLE_GENERATOR_H_
