@@ -13,6 +13,8 @@
 #include "Common.h"
 #include "Math.h"
 #include "Particle.h"
+#include "ParticleManager.h"
+#include "Timer.h"
 
 const char* vertexShaderSource = "#version 330 core\n"
 "layout (location = 0) in vec3 aPos;\n"
@@ -130,7 +132,7 @@ float box[] = {
 };
 
 // This is a really bad "ball" - just an octahedron
-float br = 0.01; // ball radius
+float br = 0.05; // ball radius
 float ball[] = {
     // positions         // colors
      br,  0,  0,   1.0f, 1.0f, 1.0f, // triangle 1
@@ -180,11 +182,41 @@ private:
     glm::mat4* modelMatrices;
     unsigned int boxbuffer, ballbuffer, VAO;
 
+    ParticleManager particle_manager;
+    Timer timer;
+
+    void draw() 
+    {
+        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        // Set view matrix
+        view = glm::lookAt(glm::vec3(camX, camY, camZ), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 1.0));
+        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+
+
+        // render the ball
+        glBindBuffer(GL_ARRAY_BUFFER, ballbuffer);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+        glEnableVertexAttribArray(1);
+        for(int i = 0; i < PARTICLE_NUMBER; i++)
+        {
+            glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMatrices[i]));
+            glDrawArrays(GL_TRIANGLES, 0, 24);
+        }
+        
+        glfwSwapBuffers(window);
+    }
+
 public:
     Renderer();
 
     void initialize()
     {
+        modelMatrices = new glm::mat4[PARTICLE_NUMBER];
+        update_position_from_manager();
+
         glfwInit();
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -235,9 +267,7 @@ public:
         // Set up vertex array object (VAO) and vertex buffers for box and ball
         glGenVertexArrays(1, &VAO);
         glBindVertexArray(VAO);
-        glGenBuffers(1, &boxbuffer);
-        glBindBuffer(GL_ARRAY_BUFFER, boxbuffer);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(box), box, GL_STATIC_DRAW);
+
         glGenBuffers(1, &ballbuffer);
         glBindBuffer(GL_ARRAY_BUFFER, ballbuffer);
         glBufferData(GL_ARRAY_BUFFER, sizeof(ball), ball, GL_STATIC_DRAW);
@@ -253,84 +283,65 @@ public:
         // Set Projection matrix
         projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
-
-
-        modelMatrices = new glm::mat4[PARTICLE_NUMBER];
-        update_position(0.0);
     }
 
     void start_looping()
     {
-        int n=0;
-        while(!glfwWindowShouldClose(window))
+        while(!glfwWindowShouldClose(window) && !timer.is_time_to_stop())
         {
             processInput(window);
-            
-            glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            // Set view matrix
-            view = glm::lookAt(glm::vec3(camX, camY, camZ), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 1.0));
-            glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-            // render the box
-            glBindBuffer(GL_ARRAY_BUFFER, boxbuffer);
-            // position attribute
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-            glEnableVertexAttribArray(0);
-            // color attribute
-            glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-            glEnableVertexAttribArray(1);
-            // draw the box (no model transform needed)
-            model = glm::mat4(1.0f);
-            glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-            glDrawArrays(GL_TRIANGLES, 0, 36);
 
-            // render the ball
-            glBindBuffer(GL_ARRAY_BUFFER, ballbuffer);
-            // position attribute
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-            glEnableVertexAttribArray(0);
-            // color attribute
-            glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-            glEnableVertexAttribArray(1);
-            // Translate ball to its position and draw
-            model = glm::mat4(1.0f);
-            model = glm::translate(model, glm::vec3(ballposition[0]+0.5, ballposition[1]+ 0.3, ballposition[2]));
-            glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-            glDrawArrays(GL_TRIANGLES, 0, 24);
-
-            for(int i = 0; i < PARTICLE_NUMBER; i++)
+            if (timer.is_time_to_draw()) 
             {
-                glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMatrices[i]));
-                glDrawArrays(GL_TRIANGLES, 0, 24);
+                timer.update_next_display_time();
+                update_position_from_manager();
+                draw();
             }
             
+            particle_manager.generate_particle();
+            particle_manager.compute_acceleration();
 
-            glfwSwapBuffers(window);
-
-            glfwPollEvents(); 
-
-            update_position(0.0);
+            glfwPollEvents();
+            
+            timer.update_simulation_time();
         }
     }
 
 
-  void update_position(float n)
+    void update_position_from_manager()
     {
-        ballposition[2] -= 0.001;
+        Vec pos;
+
         for(int i = 0; i < PARTICLE_NUMBER; i++)
         {
+            if(particle_manager.activated_particle_[i] == true)
+            {
+                pos = particle_manager.particle_list_[i]->get_transformed_postion_for_renderer();
+            }
+            else
+            {
+                pos = {0.0, 0.0, 0.0};
+            }
+
             model = glm::mat4(1.0f);
-            model = glm::translate(model, (glm::vec3(ballposition[0] + 0.01 * i,
-                                                     ballposition[1] + 0.01 * i, 
-                                                     ballposition[2] - n * 0.001)));
+            model = glm::translate(model, (glm::vec3(pos.x,
+                                                     pos.y, 
+                                                     pos.z)));
             modelMatrices[i] = model;
         }
+
+
     }
 
     ~Renderer();
 };
 
-Renderer::Renderer() {}
+Renderer::Renderer() 
+{
+    timer.reset();
+    particle_manager.reset(&timer);
+}
+
 Renderer::~Renderer() {}
 
 

@@ -2,7 +2,6 @@
 #define PARTICLE_H_
 
 #include "Math.h"
-#include "RandGenerator.h"
 
 const float brightness_step = -0.01;
 

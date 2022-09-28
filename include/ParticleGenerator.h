@@ -53,6 +53,7 @@ public:
         generate_random_vec(&particle->state.velocity);
         vec_multiply(&particle->state.velocity, rand_generator_.generate_gaussian(INIT_SPEED_STD, INIT_SPEED_MEAN));
 
+
         // GENERATE RAND POSITION W/ OFFSET
         particle->state.position = {
             EDGE_SIZE / 2, 
@@ -62,7 +63,6 @@ public:
         generate_start_offset(&particle->state);
 
         particle->age               = curr_simulation_time;
-        // particle->color             = k_init_color_;
     }
 
     ~ParticleGenerator();

@@ -41,6 +41,7 @@ enum struct GENERATOR_TYPE
 #define DISPLAY_REFRESH_INTERVAL (1.0 / 30.0) //  sec (HZ)
 
 #include <vector>
+#include <iostream>
 
 #include "Math.h"
 
@@ -65,6 +66,13 @@ const double k_simplified_friction_coef = 0.2;
 const double k_restitution_coef = 0.8;
 const struct Vec k_gravity = {0, 0, -10};
 const struct Vec k_wind_velocity = {0, 0, 0};
+
+#ifdef ENABLE_LOGGER
+void print_vec(Vec v1)
+{
+    std::cout << "[" << v1.x << ", " << v1.y << ", " << v1.z << "]" << std::endl;
+}
+#endif
 
 
 #endif // COMMON_H_
