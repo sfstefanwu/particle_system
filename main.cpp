@@ -22,24 +22,19 @@ int main() {
     renderer.initialize();
     renderer.start_looping();
 
-    while(!timer.is_time_to_stop())
-    {
-        // particle_list.generate_particle();
-        if(timer.is_time_to_draw())
-        {
-            /**
-             * TODO: data from particleList to Renderer
-             */ 
+    // while(!timer.is_time_to_stop())
+    // {
+    //     // particle_list.generate_particle();
+    //     if(timer.is_time_to_draw())
+    //     {
+    //         // particle_list.draw();   // call renderer_->update_position();
+    //         renderer.update_position(timer.get_simluation_time());
+    //         timer.update_next_display_time();
+    //     }
+    //     timer.update_simulation_time();
+    //     timer.logger();
+    // }
 
-            // particle_list.draw();   // call renderer_->update_position();
-            renderer.update_position(timer.get_simluation_time());
-            timer.update_next_display_time();
-        }
-        timer.update_simulation_time();
-    }
-
-    
-    // renderer.start_looping();
 
 
 	return 0;

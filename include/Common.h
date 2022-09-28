@@ -31,7 +31,7 @@ enum struct GENERATOR_TYPE
  * CRONO
  */
 #define TIMESTEP 0.02            // sec
-#define MAX_DISPLAY_TIME 60      // sec
+#define MAX_DISPLAY_TIME 3000     // sec
 
 /**
  * VIEW PARAMS
