@@ -4,7 +4,7 @@
 #include "Math.h"
 #include "RandGenerator.h"
 
-const float brightness_step = 0.01;
+const float brightness_step = -0.01;
 
 struct State
 {
@@ -12,6 +12,7 @@ struct State
     Vec velocity;
 };
 
+/*
 struct Color 
 {
     float r;
@@ -20,26 +21,26 @@ struct Color
 
     inline void lower_brightness()
     {
-        (r <= brightness_step) ? r = 0 : r -= brightness_step;
-        (g <= brightness_step) ? g = 0 : g -= brightness_step;
-        (b <= brightness_step) ? b = 0 : b -= brightness_step;
+        (r <= brightness_step) ? r = 0.0f : r -= brightness_step;
+        (g <= brightness_step) ? g = 0.0f : g -= brightness_step;
+        (b <= brightness_step) ? b = 0.0f : b -= brightness_step;
     }
     
     void vanish()
     {
-        r = 0;
-        g = 0;
-        b = 0;
+        r = 1.0f;
+        g = 1.0f;
+        b = 1.0f;
     }
 };
+*/
 
 struct Particle 
 {
     int age;
-    Color color;
     State state;
 
-    Particle() : age(0), color({0, 0, 0}), state({{0, 0, 0}, {0, 0, 0}}) {}
+    Particle() : age(0), state({{0, 0, 0}, {0, 0, 0}}) {}
 
     inline Vec get_transformed_postion_for_renderer()
     {

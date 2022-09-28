@@ -81,7 +81,7 @@ class Timer
 #if ENABLE_LOGGER
     void logger() {
         std::cout << std::setw(10) << "[timer] ";
-        std::cout << "simulation_time: " << simulation_time_ << " | next_display_time: " << next_display_time_;
+        std::cout << "simulation_time: " << simulation_time_ << " | next_display_time: " << next_display_time_ << std::endl;
     }
 #endif
 };

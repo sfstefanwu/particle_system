@@ -6,6 +6,7 @@
 /* You can just copy the headers from glm, or go through the install */
 #include <iostream>
 
+#include "ParticleList.h"
 #include "Renderer.h"
 #include "Timer.h"
 
@@ -13,19 +14,25 @@
 int main() {
 
     Timer timer;
-    timer.reset();
-
     Renderer renderer;
+    // ParticleList particle_list(&timer, &renderer);
+
+    timer.reset();
+    // renderer.initialize(particle_list.get_particle_list_addr());
     renderer.initialize();
+    renderer.start_looping();
 
     while(!timer.is_time_to_stop())
     {
-        
+        // particle_list.generate_particle();
         if(timer.is_time_to_draw())
         {
             /**
              * TODO: data from particleList to Renderer
              */ 
+
+            // particle_list.draw();   // call renderer_->update_position();
+            renderer.update_position(timer.get_simluation_time());
             timer.update_next_display_time();
         }
         timer.update_simulation_time();

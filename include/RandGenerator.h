@@ -53,7 +53,7 @@ public:
     {
         for(int i = 0; i < RAND_VEC_LEN; i++) 
         {
-            std::cout << random_num_vec_[i] << ' ';
+            std::cout << random_num_vec_.at(i) << ' ';
         }
     }
 #endif

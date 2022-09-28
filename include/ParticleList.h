@@ -55,7 +55,6 @@ public:
             {
                 activated_particle_[i] = false;
                 deactivate_queue_.push(i);
-                particle_list_[i]->color.vanish();
             }
         }
     }
@@ -79,7 +78,12 @@ public:
 
     void draw() 
     {
-        renderer_->update_drawing(particle_list_);
+        // renderer_->update_position(0.0);
+    }
+
+    std::vector<Particle*> get_particle_list_addr()
+    {
+        return particle_list_;
     }
 
 

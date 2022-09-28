@@ -7,7 +7,7 @@
 /**
  * OBJECT PARAMS
  */ 
-#define EDGE_SIZE 100.0         
+#define EDGE_SIZE 100         
 #define PARTICLE_MASS 1.0   
 #define PARTICLE_NUMBER 512
 
@@ -25,7 +25,7 @@ enum struct GENERATOR_TYPE
     OMNI, DIRECTED, DISK, TRIANGLE, SPHERE
 };
 
-const Vec init_position = {EDGE_SIZE/2, EDGE_SIZE/2, EDGE_SIZE*3/4};
+// const Vec init_position = {EDGE_SIZE/2, EDGE_SIZE/2, EDGE_SIZE*3/4};
 
 /**
  * CRONO

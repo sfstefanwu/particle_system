@@ -14,8 +14,8 @@ private:
 
     /**
      * INIT PARAMS
-     */ 
-    Color k_init_color_;
+     */
+    // Color k_init_color_;
 
 
     /** 
@@ -62,7 +62,7 @@ public:
         generate_start_offset(&particle->state);
 
         particle->age               = curr_simulation_time;
-        particle->color             = k_init_color_;
+        // particle->color             = k_init_color_;
     }
 
     ~ParticleGenerator();
@@ -70,7 +70,7 @@ public:
 
 ParticleGenerator::ParticleGenerator() 
 {
-    k_init_color_ =  {255/255, 165/255, 0/255};
+    // k_init_color_ =  {255/255, 165/255, 0/255};
 }
 ParticleGenerator::~ParticleGenerator() {}
 

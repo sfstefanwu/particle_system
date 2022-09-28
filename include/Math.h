@@ -29,25 +29,6 @@ struct Vec {
 };
 
 
-struct Plain {
-    // a*x + b*y + c*z + d = 0
-    float a;
-    float b;
-    float c;
-    float d;
-        
-    Vec get_unit_normal_vec() {
-        return {a, b, c};
-    }
-};
-
-struct Triangle {
-    float v1;
-    float v2;
-    float v3;
-};
-
-
 inline Vec vec_add(Vec v1, Vec v2) {
     return {
         v1.x + v2.x,
@@ -94,6 +75,39 @@ inline Vec vec_cross_product(Vec v1, Vec v2) {
         -((v1.x * v2.z) - (v2.x * v1.z)),
         (v1.x * v2.y) - (v2.x * v1.y)
     };
+};
+
+struct TrianglePlain {
+    Vec p1;
+    Vec p2;
+    Vec p3;
+
+    Vec get_unit_normal_vec() {
+        Vec cross_product = vec_cross_product(
+                                vec_substract(p1, p2),
+                                vec_substract(p3, p2)
+                            );
+        return cross_product.get_unit_vec();
+    }
+};
+
+
+struct Plain {
+    // a*x + b*y + c*z + d = 0
+    float a;
+    float b;
+    float c;
+    float d;
+        
+    Vec get_unit_normal_vec() {
+        return {a, b, c};
+    }
+};
+
+struct Triangle {
+    float v1;
+    float v2;
+    float v3;
 };
 
 
