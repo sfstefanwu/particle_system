@@ -14,7 +14,7 @@
 /**
  * PARTICLE GENERATOR PARAMS
  */ 
-#define RAND_VEC_LEN 2047
+#define RAND_VEC_LEN 9973
 #define INIT_SPEED_MEAN 10.0
 #define INIT_SPEED_STD 5.0
 #define GENERATION_RATE 128.0    // per sec
@@ -24,8 +24,6 @@ enum struct GENERATOR_TYPE
 {
     OMNI, DIRECTED, DISK, TRIANGLE, SPHERE
 };
-
-// const Vec init_position = {EDGE_SIZE/2, EDGE_SIZE/2, EDGE_SIZE*3/4};
 
 /**
  * CRONO
@@ -54,18 +52,15 @@ enum struct ACCELERATION
     GRAVITY, AIR_RESISTANCE
 };
 
-std::vector<Vec> k_acceleration = 
-{
-    {0, 0, -10},    //GRAVITY
-    {}
-};
 
 const double k_airres_coef = 0.05;
 const double k_friction_coef = 0.20;
 const double k_simplified_friction_coef = 0.2;
-const double k_restitution_coef = 0.8;
-const struct Vec k_gravity = {0, 0, -10};
-const struct Vec k_wind_velocity = {2, -1, 0};
+const double k_restitution_coef = 0.6;
+const struct Vec k_gravity = {0, 0, -15};
+
+const struct Vec k_wind_velocity = {0.0, 0.0, 0.0};
+// const struct Vec k_wind_velocity = {0.2, -0.2, 0};
 
 
 

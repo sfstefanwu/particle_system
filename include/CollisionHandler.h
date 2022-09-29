@@ -9,11 +9,11 @@
 class CollisionHandler
 {
 private:
-    std::vector<TrianglePlain> plains_;
     float distance_curr_;
     float distance_next_;
     int idx_collision_plain_;
-    
+
+    std::vector<TrianglePlain> plains_;
 
     inline float calculate_signed_distance(int i, Vec *position) 
     {
@@ -44,6 +44,7 @@ private:
     }
 
 public:
+
     CollisionHandler();
 
     void reset()

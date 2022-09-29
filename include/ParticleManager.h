@@ -74,7 +74,7 @@ public:
     }
 
     State compute_new_state()
-    {
+    { 
         State st, new_st;
         for(int i = 0; i < PARTICLE_NUMBER; i++)
         {
@@ -87,6 +87,7 @@ public:
                                           vec_multiply(k_gravity, TIMESTEP));
                 new_st.position = vec_add(st.position, 
                                           vec_multiply(st.velocity, TIMESTEP));
+                new_st.position = vec_add(new_st.position, k_wind_velocity);
 
                 // Detect collision
                 if(collision_handler_.detect_collision(&st.position, &new_st.position))
@@ -99,7 +100,6 @@ public:
             }
         }
     }
-
 
     std::vector<Particle*> &get_list_addr()
     {
