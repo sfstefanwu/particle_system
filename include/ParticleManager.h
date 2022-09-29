@@ -49,7 +49,7 @@ public:
     void generate_particle(Vec generator_origin)
     {
         int idx;
-        for(int i = 0; i < k_num_to_generate_; i++)
+        for(int i = 0; !deactivate_idx_que_.empty() && i < k_num_to_generate_; i++)
         {
             idx = deactivate_idx_que_.front();  deactivate_idx_que_.pop();
 

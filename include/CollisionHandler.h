@@ -21,18 +21,8 @@ private:
         return vec_dot_product(plains_[i].get_unit_normal_vec(), v);
     }
 
-    inline bool PointOverTriangle(int i, Vec *pos)
+    inline bool test_pos_over_triplain(int i, Vec *pos)
     {
-        /*
-        Vec p1_to_pos = vec_substract(pos, plains_[i].p1);
-        Vec unit_cp = vec_cross_product(
-            vec_substract(plains_[i].p2, plains_[i].p1),
-            vec_substract(plains_[i].p3, plains_[i].p1)
-        ).get_unit_vec();
-        Vec norm = vec_multiply(unit_cp, vec_dot_product(p1_to_pos, unit_cp));
-        Vec proj = vec_substract(p1_to_pos, norm);
-        */
-
         Vec v0 = vec_substract(plains_[i].p3, plains_[i].p1);
         Vec v1 = vec_substract(plains_[i].p2, plains_[i].p1);
         Vec v2 = vec_substract(*pos, plains_[i].p1);
@@ -88,8 +78,6 @@ public:
 
     bool detect_collision(Vec *position_curr, Vec *position_next) 
     {
-        /// return -1 if no collision, and float as timestep fraction
-
         for(int i = 0; i < plains_.size(); i++) 
         {
             distance_curr_ = calculate_signed_distance(i, position_curr);
@@ -97,7 +85,7 @@ public:
 
             if (std::signbit(distance_curr_) != std::signbit(distance_next_)) 
             {
-                if (PointOverTriangle(i, position_curr))
+                if (test_pos_over_triplain(i, position_curr))
                 {
                     idx_collision_plain_ = i;
                     return true;
@@ -119,10 +107,9 @@ public:
             normal,
             vec_dot_product(new_st->velocity, normal)
         );
-
         Vec v_in_tangential = vec_substract(new_st->velocity, v_in_normal);
         new_st->velocity = vec_add(
-            vec_multiply(v_in_normal, -k_friction_coef),
+            vec_multiply(v_in_normal, -k_restitution_coef),
             vec_multiply(v_in_tangential, (1 - k_friction_coef))
         );
     }

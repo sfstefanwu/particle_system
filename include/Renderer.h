@@ -144,9 +144,16 @@ float ball[] = {
 
 float plain[] = {
     // positions    // colors
-    1,  -1,  0,     0.6f, 0.9f, 0.8f, // triangle 1
-    1, 0,  -1,      0.6f, 0.9f, 0.8f,
-    0,  -1, 0,      0.6f, 0.9f, 0.8f
+    1,  -1,  0,     1.0f, 0.5f, 0.0f, 
+    0.5, 0.2,  -1,      1.0f, 0.5f, 0.0f,
+    -1,  -1, 0.5,      1.0f, 0.5f, 0.0f
+};
+
+float plain_2[] = {
+    // positions    // colors
+    1,  0,  0,     1.0f, 0.5f, 0.0f, 
+    0,  0,  -1,      1.0f, 0.5f, 0.0f,
+    -1,  -1, 0.2,      1.0f, 0.5f, 0.0f
 };
 
     
@@ -318,18 +325,16 @@ public:
     void update_position_from_manager()
     {
         Vec pos;
-        float age;
 
         for(int i = 0; i < PARTICLE_NUMBER; i++)
         {
             if(particle_manager.activated_particle_[i] == true)
             {
                 pos = particle_manager.particle_list_[i]->get_transformed_postion_for_renderer();
-                age = particle_manager.particle_list_[i]->age;
             }
             else
             {
-                pos = {0.0, 0.0, 0.0};
+                pos = {10.0, 10.0, 10.0};
             }
 
             model = glm::mat4(1.0f);

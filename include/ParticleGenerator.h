@@ -12,12 +12,6 @@ class ParticleGenerator
 private:
     RandGenerator rand_generator_;
 
-    /**
-     * INIT PARAMS
-     */
-    // Color k_init_color_;
-
-
     /** 
      * RANDOM VEC
      */
@@ -64,10 +58,7 @@ public:
     ~ParticleGenerator();
 };
 
-ParticleGenerator::ParticleGenerator() 
-{
-    // k_init_color_ =  {255/255, 165/255, 0/255};
-}
+ParticleGenerator::ParticleGenerator() {}
 ParticleGenerator::~ParticleGenerator() {}
 
 
