@@ -9,16 +9,16 @@
  */ 
 #define EDGE_SIZE 100         
 #define PARTICLE_MASS 1.0   
-#define PARTICLE_NUMBER 512
+#define PARTICLE_NUMBER 1024
 
 /**
  * PARTICLE GENERATOR PARAMS
  */ 
-#define RAND_VEC_LEN 331
+#define RAND_VEC_LEN 2047
 #define INIT_SPEED_MEAN 10.0
 #define INIT_SPEED_STD 5.0
-#define GENERATION_RATE 64.0    // per sec
-#define LIFE_SPAN 5.0         // sec
+#define GENERATION_RATE 128.0    // per sec
+#define LIFE_SPAN (PARTICLE_NUMBER / GENERATION_RATE + 1)         // sec
 
 enum struct GENERATOR_TYPE 
 {
@@ -67,12 +67,6 @@ const double k_restitution_coef = 0.8;
 const struct Vec k_gravity = {0, 0, -10};
 const struct Vec k_wind_velocity = {0, 0, 0};
 
-#ifdef ENABLE_LOGGER
-void print_vec(Vec v1)
-{
-    std::cout << "[" << v1.x << ", " << v1.y << ", " << v1.z << "]" << std::endl;
-}
-#endif
 
 
 #endif // COMMON_H_

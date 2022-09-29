@@ -48,6 +48,10 @@ float camX = camradius;
 float camY = 0.0;
 float camZ = 0.0;
 
+// 
+Vec generator_origin = {0.0, 0.0, 0.0};
+float generator_speed = 0.01;
+
 // Allow window resizing
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
@@ -88,51 +92,28 @@ void processInput(GLFWwindow* window) {
         camY = camradius * cos(glm::radians(phi)) * sin(glm::radians(theta));
         camZ = camradius * sin(glm::radians(phi));
     }
+
+
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+        generator_origin = vec_add(generator_origin, {0, -generator_speed, 0});
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+        generator_origin = vec_add(generator_origin, {0, generator_speed, 0});
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+        generator_origin = vec_add(generator_origin, {-generator_speed, 0, 0});
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+        generator_origin = vec_add(generator_origin, {generator_speed, 0, 0});
+    }
+
 }
 
-// Box with different colors for each face
-float box[] = {
-    // positions         // colors
-     1.0f, -1.0f, -1.0f,  0.0f, 0.0f, 1.0f, // bottom
-     1.0f,  1.0f, -1.0f,  0.0f, 0.0f, 1.0f,
-    -1.0f,  1.0f, -1.0f,  0.0f, 0.0f, 1.0f,
-    -1.0f,  1.0f, -1.0f,  0.0f, 0.0f, 1.0f,
-    -1.0f, -1.0f, -1.0f,  0.0f, 0.0f, 1.0f,
-     1.0f, -1.0f, -1.0f,  0.0f, 0.0f, 1.0f,
-     1.0f,  1.0f,  1.0f,  0.0f, 1.0f, 1.0f, // top
-     1.0f, -1.0f,  1.0f,  0.0f, 1.0f, 1.0f,
-    -1.0f,  1.0f,  1.0f,  0.0f, 1.0f, 1.0f,
-     1.0f, -1.0f,  1.0f,  0.0f, 1.0f, 1.0f,
-    -1.0f, -1.0f,  1.0f,  0.0f, 1.0f, 1.0f,
-    -1.0f,  1.0f,  1.0f,  0.0f, 1.0f, 1.0f,
-     1.0f, -1.0f, -1.0f,  1.0f, 0.0f, 1.0f, // left
-    -1.0f, -1.0f,  1.0f,  1.0f, 0.0f, 1.0f,
-     1.0f, -1.0f,  1.0f,  1.0f, 0.0f, 1.0f,
-    -1.0f, -1.0f, -1.0f,  1.0f, 0.0f, 1.0f,
-    -1.0f, -1.0f,  1.0f,  1.0f, 0.0f, 1.0f,
-     1.0f, -1.0f, -1.0f,  1.0f, 0.0f, 1.0f,
-     1.0f,  1.0f,  1.0f,  0.0f, 1.0f, 0.0f, // right
-    -1.0f,  1.0f,  1.0f,  0.0f, 1.0f, 0.0f,
-    -1.0f,  1.0f, -1.0f,  0.0f, 1.0f, 0.0f,
-     1.0f,  1.0f, -1.0f,  0.0f, 1.0f, 0.0f,
-     1.0f,  1.0f,  1.0f,  0.0f, 1.0f, 0.0f,
-    -1.0f,  1.0f, -1.0f,  0.0f, 1.0f, 0.0f,
-    -1.0f,  1.0f,  1.0f,  1.0f, 0.0f, 0.0f, // back
-    -1.0f, -1.0f,  1.0f,  1.0f, 0.0f, 0.0f,
-    -1.0f,  1.0f, -1.0f,  1.0f, 0.0f, 0.0f,
-    -1.0f, -1.0f,  1.0f,  1.0f, 0.0f, 0.0f,
-    -1.0f, -1.0f, -1.0f,  1.0f, 0.0f, 0.0f,
-    -1.0f,  1.0f, -1.0f,  1.0f, 0.0f, 0.0f,
-     1.0f, -1.0f,  1.0f,  1.0f, 1.0f, 0.0f, // front
-     1.0f,  1.0f,  1.0f,  1.0f, 1.0f, 0.0f,
-     1.0f, -1.0f, -1.0f,  1.0f, 1.0f, 0.0f,
-     1.0f,  1.0f, -1.0f,  1.0f, 1.0f, 0.0f,
-     1.0f, -1.0f, -1.0f,  1.0f, 1.0f, 0.0f,
-     1.0f,  1.0f,  1.0f,  1.0f, 1.0f, 0.0f
-};
-
 // This is a really bad "ball" - just an octahedron
-float br = 0.05; // ball radius
+float br = 0.025; // ball radius
 float ball[] = {
     // positions         // colors
      br,  0,  0,   1.0f, 1.0f, 1.0f, // triangle 1
@@ -161,7 +142,34 @@ float ball[] = {
       0,  0,-br,   1.0f, 1.0f, 1.0f,
 };
 
-float ballposition[3] = {-1.0, -1.0, 1.0};
+float plain[] = {
+    // positions         // colors
+     br,  0,  0,   1.0f, 1.0f, 1.0f, // triangle 1
+      0, br,  0,   1.0f, 1.0f, 1.0f,
+      0,  0, br,   1.0f, 1.0f, 1.0f,
+      0, br,  0,   1.0f, 1.0f, 1.0f, // triangle 2
+    -br,  0,  0,   1.0f, 1.0f, 1.0f,
+      0,  0, br,   1.0f, 1.0f, 1.0f,
+    -br,  0,  0,   1.0f, 1.0f, 1.0f, // triangle 3
+      0,-br,  0,   1.0f, 1.0f, 1.0f,
+      0,  0, br,   1.0f, 1.0f, 1.0f,
+      0,-br,  0,   1.0f, 1.0f, 1.0f, // triangle 4
+     br,  0,  0,   1.0f, 1.0f, 1.0f,
+      0,  0, br,   1.0f, 1.0f, 1.0f,
+     br,  0,  0,   1.0f, 1.0f, 1.0f, // triangle 5
+      0,-br,  0,   1.0f, 1.0f, 1.0f,
+      0,  0,-br,   1.0f, 1.0f, 1.0f,
+      0,-br,  0,   1.0f, 1.0f, 1.0f, // triangle 6
+    -br,  0,  0,   1.0f, 1.0f, 1.0f,
+      0,  0,-br,   1.0f, 1.0f, 1.0f,
+    -br,  0,  0,   1.0f, 1.0f, 1.0f, // triangle 7
+      0, br,  0,   1.0f, 1.0f, 1.0f,
+      0,  0,-br,   1.0f, 1.0f, 1.0f,
+      0, br,  0,   1.0f, 1.0f, 1.0f, // triangle 8
+     br,  0,  0,   1.0f, 1.0f, 1.0f,
+      0,  0,-br,   1.0f, 1.0f, 1.0f,
+};
+
     
 class Renderer
 {
@@ -192,7 +200,6 @@ private:
         // Set view matrix
         view = glm::lookAt(glm::vec3(camX, camY, camZ), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 1.0));
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-
 
         // render the ball
         glBindBuffer(GL_ARRAY_BUFFER, ballbuffer);
@@ -298,8 +305,10 @@ public:
                 draw();
             }
             
-            particle_manager.generate_particle();
+            particle_manager.kill_particle();
+            particle_manager.generate_particle(transform_gl2phy(generator_origin));
             particle_manager.compute_acceleration();
+            
 
             glfwPollEvents();
             
@@ -311,12 +320,14 @@ public:
     void update_position_from_manager()
     {
         Vec pos;
+        float age;
 
         for(int i = 0; i < PARTICLE_NUMBER; i++)
         {
             if(particle_manager.activated_particle_[i] == true)
             {
                 pos = particle_manager.particle_list_[i]->get_transformed_postion_for_renderer();
+                age = particle_manager.particle_list_[i]->age;
             }
             else
             {

@@ -37,7 +37,15 @@ inline Vec vec_add(Vec v1, Vec v2) {
     };
 };
 
-void vec_add(Vec *v1, Vec *v2) {
+inline Vec vec_add(Vec v1, float n) {
+    return {
+        v1.x + n,
+        v1.y + n,
+        v1.z + n
+    };
+}
+
+inline void vec_add(Vec *v1, Vec *v2) {
         v1->x += v2->x;
         v1->y += v2->y;
         v1->z += v2->z;
@@ -48,6 +56,14 @@ inline Vec vec_substract(Vec v1, Vec v2) {
         v1.x - v2.x,
         v1.y - v2.y,
         v1.z - v2.z
+    };
+};
+
+inline Vec vec_substract(Vec v1, float n) {
+    return {
+        v1.x - n,
+        v1.y - n,
+        v1.z - n
     };
 };
 
@@ -76,6 +92,20 @@ inline Vec vec_cross_product(Vec v1, Vec v2) {
         (v1.x * v2.y) - (v2.x * v1.y)
     };
 };
+
+inline Vec transform_phy2gl(Vec v1) {
+    return vec_substract(
+               vec_multiply(v1, (2 / EDGE_SIZE)),
+               1.0
+           );
+}
+
+inline Vec transform_gl2phy(Vec v1) {
+    return vec_multiply(
+                vec_add(v1, 1),
+                (EDGE_SIZE / 2)
+    );
+}
 
 struct TrianglePlain {
     Vec p1;
@@ -111,5 +141,11 @@ struct Triangle {
 };
 
 
+#ifdef ENABLE_LOGGER
+void print_vec(Vec v1)
+{
+    std::cout << "[" << v1.x << ", " << v1.y << ", " << v1.z << "]" << std::endl;
+}
+#endif
 
 #endif // MATH_H_

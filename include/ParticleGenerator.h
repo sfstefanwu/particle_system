@@ -47,7 +47,7 @@ private:
 public:
     ParticleGenerator();
 
-    void omnidirection_generator(Particle *particle, float curr_simulation_time)
+    void omnidirection_generator(Particle *particle, float curr_simulation_time, Vec generator_origin)
     {
         // GENERATE RAND DIRECTION & SPEED
         generate_random_vec(&particle->state.velocity);
@@ -55,11 +55,7 @@ public:
 
 
         // GENERATE RAND POSITION W/ OFFSET
-        particle->state.position = {
-            EDGE_SIZE / 2, 
-            EDGE_SIZE / 2,
-            EDGE_SIZE * 3/4
-        };
+        particle->state.position = generator_origin;
         generate_start_offset(&particle->state);
 
         particle->age               = curr_simulation_time;

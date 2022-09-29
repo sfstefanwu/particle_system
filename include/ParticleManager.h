@@ -41,16 +41,14 @@ public:
         }
     }
 
-    void generate_particle()
+    void generate_particle(Vec generator_origin)
     {
         int idx;
         for(int i = 0; i < k_num_to_generate_; i++)
         {
-            if(deactivate_idx_que_.empty()) break;
-
             idx = deactivate_idx_que_.front();  deactivate_idx_que_.pop();
 
-            particle_generator_.omnidirection_generator(particle_list_[idx], timer_->get_simluation_time());
+            particle_generator_.omnidirection_generator(particle_list_[idx], timer_->get_simluation_time(), generator_origin);
 
             activated_particle_[idx] = true;
         }
@@ -62,7 +60,7 @@ public:
 
         for(int i = 0 ; i < PARTICLE_NUMBER; i++)
         {
-            if(particle_list_[i]->age <= age_to_kill_)
+            if(activated_particle_[i] == true && particle_list_[i]->age <= age_to_kill_)
             {
                 activated_particle_[i] = false;
                 deactivate_idx_que_.push(i);
@@ -73,7 +71,6 @@ public:
     void compute_acceleration()
     {
         State st, new_st;
-
         for(int i = 0; i < PARTICLE_NUMBER; i++)
         {
             if (activated_particle_[i] == true) 
@@ -81,7 +78,7 @@ public:
                 st = particle_list_[i]->state;
 
                 new_st.velocity = vec_add(st.velocity, 
-                                          vec_multiply({0, 0, -10}, TIMESTEP));
+                                          vec_multiply({0, 0, -8}, TIMESTEP));
                 new_st.position = vec_add(st.position, 
                                           vec_multiply(st.velocity, TIMESTEP));
 
