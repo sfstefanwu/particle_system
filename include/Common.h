@@ -61,10 +61,10 @@ std::vector<Vec> k_acceleration =
 };
 
 const double k_airres_coef = 0.05;
-const double k_friction_coef = 0.25;
+const double k_friction_coef = 0.20;
 const double k_simplified_friction_coef = 0.2;
 const double k_restitution_coef = 0.8;
-const struct Vec k_gravity = {0, 0, -10};
+const struct Vec k_gravity = {0, 0, -8};
 const struct Vec k_wind_velocity = {0, 0, 0};
 
 

@@ -93,7 +93,7 @@ void processInput(GLFWwindow* window) {
         camZ = camradius * sin(glm::radians(phi));
     }
 
-
+    // A / D / W / S KEY TO MOVE GENERATOR ORIGIN OVER XY-PLAIN
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
         generator_origin = vec_add(generator_origin, {0, -generator_speed, 0});
     }
@@ -115,7 +115,7 @@ void processInput(GLFWwindow* window) {
 // This is a really bad "ball" - just an octahedron
 float br = 0.025; // ball radius
 float ball[] = {
-    // positions         // colors
+    // positions   // colors
      br,  0,  0,   1.0f, 1.0f, 1.0f, // triangle 1
       0, br,  0,   1.0f, 1.0f, 1.0f,
       0,  0, br,   1.0f, 1.0f, 1.0f,
@@ -143,31 +143,10 @@ float ball[] = {
 };
 
 float plain[] = {
-    // positions         // colors
-     br,  0,  0,   1.0f, 1.0f, 1.0f, // triangle 1
-      0, br,  0,   1.0f, 1.0f, 1.0f,
-      0,  0, br,   1.0f, 1.0f, 1.0f,
-      0, br,  0,   1.0f, 1.0f, 1.0f, // triangle 2
-    -br,  0,  0,   1.0f, 1.0f, 1.0f,
-      0,  0, br,   1.0f, 1.0f, 1.0f,
-    -br,  0,  0,   1.0f, 1.0f, 1.0f, // triangle 3
-      0,-br,  0,   1.0f, 1.0f, 1.0f,
-      0,  0, br,   1.0f, 1.0f, 1.0f,
-      0,-br,  0,   1.0f, 1.0f, 1.0f, // triangle 4
-     br,  0,  0,   1.0f, 1.0f, 1.0f,
-      0,  0, br,   1.0f, 1.0f, 1.0f,
-     br,  0,  0,   1.0f, 1.0f, 1.0f, // triangle 5
-      0,-br,  0,   1.0f, 1.0f, 1.0f,
-      0,  0,-br,   1.0f, 1.0f, 1.0f,
-      0,-br,  0,   1.0f, 1.0f, 1.0f, // triangle 6
-    -br,  0,  0,   1.0f, 1.0f, 1.0f,
-      0,  0,-br,   1.0f, 1.0f, 1.0f,
-    -br,  0,  0,   1.0f, 1.0f, 1.0f, // triangle 7
-      0, br,  0,   1.0f, 1.0f, 1.0f,
-      0,  0,-br,   1.0f, 1.0f, 1.0f,
-      0, br,  0,   1.0f, 1.0f, 1.0f, // triangle 8
-     br,  0,  0,   1.0f, 1.0f, 1.0f,
-      0,  0,-br,   1.0f, 1.0f, 1.0f,
+    // positions    // colors
+    1,  -1,  0,     0.6f, 0.9f, 0.8f, // triangle 1
+    1, 0,  -1,      0.6f, 0.9f, 0.8f,
+    0,  -1, 0,      0.6f, 0.9f, 0.8f
 };
 
     
@@ -188,7 +167,7 @@ private:
     glm::mat4 view;
 
     glm::mat4* modelMatrices;
-    unsigned int boxbuffer, ballbuffer, VAO;
+    unsigned int plain_buffer, ballbuffer, VAO;
 
     ParticleManager particle_manager;
     Timer timer;
@@ -200,6 +179,20 @@ private:
         // Set view matrix
         view = glm::lookAt(glm::vec3(camX, camY, camZ), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 1.0));
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+
+        // render and draw the plain
+        glBindBuffer(GL_ARRAY_BUFFER, plain_buffer);
+        // position attribute
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(0);
+        // color attribute
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+        glEnableVertexAttribArray(1);
+        // draw the plain (no model transform needed)
+        model = glm::mat4(1.0f);
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
 
         // render the ball
         glBindBuffer(GL_ARRAY_BUFFER, ballbuffer);
@@ -223,6 +216,7 @@ public:
     {
         modelMatrices = new glm::mat4[PARTICLE_NUMBER];
         update_position_from_manager();
+        particle_manager.add_plain(plain);
 
         glfwInit();
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -275,6 +269,10 @@ public:
         glGenVertexArrays(1, &VAO);
         glBindVertexArray(VAO);
 
+        glGenBuffers(1, &plain_buffer);
+        glBindBuffer(GL_ARRAY_BUFFER, plain_buffer);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(plain), plain, GL_STATIC_DRAW);
+
         glGenBuffers(1, &ballbuffer);
         glBindBuffer(GL_ARRAY_BUFFER, ballbuffer);
         glBufferData(GL_ARRAY_BUFFER, sizeof(ball), ball, GL_STATIC_DRAW);
@@ -307,7 +305,7 @@ public:
             
             particle_manager.kill_particle();
             particle_manager.generate_particle(transform_gl2phy(generator_origin));
-            particle_manager.compute_acceleration();
+            particle_manager.compute_new_state();
             
 
             glfwPollEvents();

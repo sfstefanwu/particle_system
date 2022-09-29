@@ -8,14 +8,14 @@
 #include "Timer.h"
 #include "Particle.h"
 #include "ParticleGenerator.h"
+#include "CollisionHandler.h"
 
 class ParticleManager
 {
 private:
-
     std::queue<int>         deactivate_idx_que_;
     ParticleGenerator       particle_generator_;
-
+    CollisionHandler        collision_handler_;
     Timer                   *timer_;
 
     const int k_num_to_generate_ = static_cast<int>(std::floor(GENERATION_RATE * TIMESTEP));
@@ -28,6 +28,11 @@ public:
 
     ParticleManager();
     ~ParticleManager();
+
+    void add_plain(float plain[])
+    {
+        collision_handler_.add_plain(plain);
+    }
 
     void reset(Timer *timer)
     {
@@ -68,29 +73,33 @@ public:
         }
     }
 
-    void compute_acceleration()
+    State compute_new_state()
     {
         State st, new_st;
         for(int i = 0; i < PARTICLE_NUMBER; i++)
         {
             if (activated_particle_[i] == true) 
             {
-                st = particle_list_[i]->state;
+                collision_handler_.reset();
 
+                st = particle_list_[i]->state;
                 new_st.velocity = vec_add(st.velocity, 
-                                          vec_multiply({0, 0, -8}, TIMESTEP));
+                                          vec_multiply(k_gravity, TIMESTEP));
                 new_st.position = vec_add(st.position, 
                                           vec_multiply(st.velocity, TIMESTEP));
 
+                // Detect collision
+                if(collision_handler_.detect_collision(&st.position, &new_st.position))
+                {
+                    collision_handler_.set_collision_response(&st, &new_st);
+                }
+
+                // Update new state for the particle
                 particle_list_[i]->state = new_st;
             }
         }
     }
 
-    // void detect_collision()
-    // {
-
-    // }
 
     std::vector<Particle*> &get_list_addr()
     {
