@@ -1,4 +1,4 @@
-# CSCE649 Project 2: Particle System
+# Particle System
 ## Features
 - Particle generator
   - An omnidirectional particle generator initializes direction, position, velocity, and life span of particles
@@ -16,3 +16,5 @@
 - External force
   - Gravity
   - Wind
+
+> TAMU CSCE649, Fall 2022
